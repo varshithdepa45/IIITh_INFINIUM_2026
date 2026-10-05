@@ -1,0 +1,25 @@
+# core
+duckdb>=1.1
+polars>=1.0
+pyarrow>=15
+pandas>=2.2
+pyyaml>=6
+tabulate>=0.9
+openpyxl>=3.1
+# layer 2
+sqlglot>=25
+rank-bm25>=0.2
+pypdf>=4
+requests>=2.31         # OpenAI-compatible calls to free providers and local vLLM/Ollama
+python-dotenv>=1.0     # loads .env (API keys) in src/common/config.py
+# later layers (install when you reach them)
+# splink>=4  pandera>=0.20  lightgbm>=4  shap>=0.45  scikit-learn>=1.4
+# sentence-transformers>=3  faiss-cpu>=1.8  feast>=0.40  streamlit>=1.38
+splink>=5.0        # identity resolution (DuckDB backend); see src/layer1/match.py
+scikit-learn>=1.6     # text TF-IDF + logreg + ridge classifiers (src/layer3/text_classifier.py)
+joblib>=1.3           # trained classifier persistence
+lightgbm>=4.7         # NBA T-learner classifiers (src/layer4/nba.py)
+shap>=0.52            # top-3 feature contributors for explanations (src/layer4/explain.py)
+streamlit>=1.38       # Agent Desk app (app/streamlit_app.py)
+# tests
+pytest>=8.0           # test suite (PYTHONPATH=. pytest -q)
