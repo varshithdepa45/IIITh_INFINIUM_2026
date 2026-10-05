@@ -23,3 +23,4 @@ shap>=0.52            # top-3 feature contributors for explanations (src/layer4/
 streamlit>=1.38       # Agent Desk app (app/streamlit_app.py)
 # tests
 pytest>=8.0           # test suite (PYTHONPATH=. pytest -q)
+duckdb
