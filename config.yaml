@@ -1,6 +1,10 @@
 # Edit data_dir to where you unzipped the release
 data_dir: ../maple_data/maple_collections_release
 db_path: warehouse/maple.duckdb
+# Hosts without the release (Streamlit Community Cloud) download a prebuilt copy of db_path from here
+# when it is missing (src/common/deploy.py; built with `python run.py deploy-bundle`).
+# The WAREHOUSE_BUNDLE_URL env var / secret overrides it.
+warehouse_bundle_url: https://github.com/varshithdepa45/IIITh_INFINIUM_2026/releases/download/warehouse-v1/
 
 # Folders inside data_dir that must NEVER be visible to the NL-to-SQL layer
 # (gold answers and labels live here).

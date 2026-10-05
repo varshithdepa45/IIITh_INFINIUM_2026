@@ -26,7 +26,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import lightgbm as lgb
 
-MODELS_DIR = Path("models/nba")
+MODELS_DIR = Path(__file__).resolve().parents[2] / "models" / "nba"
 
 ACTIONS = ["no_contact", "digital_nudge", "call_best_time", "payment_plan",
            "hardship_referral", "escalate"]

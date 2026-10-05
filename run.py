@@ -10,6 +10,7 @@
   python run.py ask "question" [--as-of 2026-09-28]
   python run.py bench [--split dev] [--questions extra.csv] [--out submission/benchmark_answers.csv]
   python run.py eval [--answers submission/benchmark_answers_dev.csv]
+  python run.py deploy-bundle [--out dist/warehouse_bundle]  # self-contained warehouse for Streamlit Cloud
 """
 from __future__ import annotations
 import argparse, json, sys
@@ -46,6 +47,7 @@ def main(argv=None):
     b.add_argument("--fresh", action="store_true", help="ignore existing rows in --out")
     b.add_argument("--pace-seconds", type=float, default=0.0,
                    help="sleep N seconds between questions (default 0; use 5 for the 19:00 extras run)")
+    db_ = sub.add_parser("deploy-bundle"); db_.add_argument("--out", default="dist/warehouse_bundle")
     e = sub.add_parser("eval"); e.add_argument("--answers", default="submission/benchmark_answers_dev.csv")
     args = p.parse_args(argv)
     cfg = load_config(args.config)
@@ -127,6 +129,9 @@ def main(argv=None):
         from src.layer2.benchmark import run
         print(run(cfg, args.out, args.questions, args.split, args.limit,
                   resume=not args.fresh, pace_seconds=args.pace_seconds))
+    elif args.cmd == "deploy-bundle":
+        from src.common.deploy import build_bundle
+        build_bundle(cfg, args.out)
     elif args.cmd == "eval":
         from src.layer2.evaluate import evaluate
         print(json.dumps(evaluate(cfg, args.answers, "reports/benchmark_dev_eval.md"), indent=2))

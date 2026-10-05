@@ -12,18 +12,22 @@ Screens (built in this order per the P7 plan):
 Decisions log is append-only to warehouse/decisions.parquet. The app NEVER writes to DuckDB.
 """
 from __future__ import annotations
-import json, time, uuid
+import json, sys, time, uuid
 from pathlib import Path
 import duckdb
 import pandas as pd
 import streamlit as st
 
-from src.common.config import load_config
+# `streamlit run app/streamlit_app.py` puts app/ (not the repo root) on sys.path; add the root so
+# `src.*` imports work locally and on Streamlit Community Cloud.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from src.common.config import ROOT, load_config
 from src.layer4.nba import score_case, _load_models, _project, FEATURE_COLS
 from src.layer4.explain import top_reasons
 
 HERO_CASE = "CS-2026-134197"
-DECISIONS_PARQUET = Path("warehouse/decisions.parquet")
+DECISIONS_PARQUET = ROOT / "warehouse" / "decisions.parquet"
 REASON_CODES = [
     "accepted_as_is", "edited_action", "edited_timing", "customer_request",
     "agent_knowledge_overrides_model", "supervisor_override", "data_looks_wrong",
@@ -33,7 +37,13 @@ REASON_CODES = [
 
 # --------------------------------------------------------------------------- cached accessors
 @st.cache_resource
-def _cfg(): return load_config()
+def _cfg():
+    cfg = load_config()
+    if not Path(cfg["db_path"]).exists():   # e.g. Streamlit Cloud: fetch the prebuilt warehouse once
+        from src.common.deploy import ensure_warehouse
+        with st.spinner("First start: downloading the prebuilt warehouse (a few minutes)..."):
+            ensure_warehouse(cfg)
+    return cfg
 
 
 @st.cache_resource
